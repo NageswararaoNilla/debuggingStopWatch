@@ -8,13 +8,17 @@ class Stopwatch extends Component {
     timeElapsedInSeconds: 0,
   }
 
-  componentWillunmount() {
-    clearTimeout(this.timeInterval)
+  //   componentDidMount() {
+  //     this.timeInterval = null
+  //   }
+
+  componentWillUnmount() {
+    clearInterval(this.timeInterval)
   }
 
   onResetTimer = () => {
-    clearInterval(timeInterval)
-    this.setState({isTimerRunning: false})
+    clearInterval(this.timeInterval)
+    this.setState({isTimerRunning: false, timeElapsedInSeconds: 0})
   }
 
   onStopTimer = () => {
@@ -24,19 +28,20 @@ class Stopwatch extends Component {
 
   updateTime = () => {
     this.setState(prevState => ({
-      timeElapsedInSeconds: prevState + 1,
+      timeElapsedInSeconds: prevState.timeElapsedInSeconds + 1,
     }))
   }
 
   onStartTimer = () => {
-    timeInterval = setTimeout(updateTime, 1000)
+    clearInterval(this.timeInterval)
+    this.timeInterval = setInterval(this.updateTime, 1000)
     this.setState({isTimerRunning: true})
   }
 
   renderSeconds = () => {
     const {timeElapsedInSeconds} = this.state
-    const seconds = Math.floor(timeElapsedInSeconds % 60)
-
+    const seconds = Math.floor(parseInt(timeElapsedInSeconds, 10) % 60)
+    console.log(timeElapsedInSeconds)
     if (seconds < 10) {
       return `0${seconds}`
     }
@@ -45,7 +50,7 @@ class Stopwatch extends Component {
 
   renderMinutes = () => {
     const {timeElapsedInSeconds} = this.state
-    const minutes = Math.floor(timeElapsedInSeconds / 60)
+    const minutes = Math.floor(parseInt(timeElapsedInSeconds, 10) / 60)
 
     if (minutes < 10) {
       return `0${minutes}`
@@ -55,8 +60,8 @@ class Stopwatch extends Component {
 
   render() {
     const {isTimerRunning} = this.state
-    const time = `${renderMinutes()}:${renderSeconds()}`
-    
+    const time = `${this.renderMinutes()}:${this.renderSeconds()}`
+
     return (
       <div className="app-container">
         <div className="stopwatch-container">
@@ -102,4 +107,4 @@ class Stopwatch extends Component {
   }
 }
 
-default export Stopwatch
+export default Stopwatch
